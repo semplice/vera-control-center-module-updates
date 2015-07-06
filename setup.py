@@ -70,6 +70,7 @@ class CreatePotTemplate(Command):
 		
 		py_files = []
 		glade_files = []
+		desktop_files = []
 		
 		for directory, dirnames, filenames in os.walk("."):
 			for file_ in filenames:
@@ -77,6 +78,8 @@ class CreatePotTemplate(Command):
 					py_files.append(os.path.join(directory, file_))
 				elif file_.endswith(".glade"):
 					glade_files.append(os.path.join(directory, file_))
+				elif file_.endswith(".desktop"):
+					desktop_files.append(os.path.join(directory, file_))
 					
 		subprocess.call([
 			"xgettext",
@@ -85,6 +88,14 @@ class CreatePotTemplate(Command):
 			"--keyword=_",
 			"--output=%s" % output_file,
 		] + py_files)
+
+		subprocess.call([
+			"xgettext",
+			"--language=Desktop",
+			"--from-code=utf-8",
+			"-j",
+			"--output=%s" % os.path.join(self.cwd, l10n_path, APP_NAME, "%s.pot" % APP_NAME)
+		] + desktop_files)
 		
 		for file_ in glade_files:
 			subprocess.call([

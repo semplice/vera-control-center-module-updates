@@ -3,7 +3,7 @@ host = https://www.transifex.com
 
 [vera-control-center-module-updates.main]
 file_filter = po/vera-control-center-module-updates/<lang>.po
-source_file = po/vera-control-center-module-updates.pot
+source_file = po/vera-control-center-module-updates/vera-control-center-module-updates.pot
 source_lang = en
 type = PO
 

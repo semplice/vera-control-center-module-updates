@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: vera-control-center-module-updates\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-06 23:51+0200\n"
-"PO-Revision-Date: 2015-07-06 21:58+0000\n"
+"POT-Creation-Date: 2015-07-07 00:22+0200\n"
+"PO-Revision-Date: 2015-07-06 22:26+0000\n"
 "Last-Translator: g7 <me@medesimo.eu>\n"
 "Language-Team: Italian (http://www.transifex.com/projects/p/vera-control-center-module-updates/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -17,6 +17,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: modules/updates/updates.desktop:4
+msgid "update-manager"
+msgstr "update-manager"
+
+#: modules/updates/updates.desktop:7
+msgid "Manage update preferences"
+msgstr "Gestisci le preferenze degli aggiornamenti"
+
+#: modules/updates/updates.desktop:9
+msgid "Updates;Development;Channels"
+msgstr "Aggiornamenti;Sviluppo;Canali"
+
+#: modules/updates/updates.desktop:10
+msgid "Updates"
+msgstr "Aggiornamenti"
 
 #: modules/updates/updates.glade.h:1
 msgid "Update channel"

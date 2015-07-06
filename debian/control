@@ -1,0 +1,22 @@
+Source: vera-control-center-module-updates
+Section: admin
+Priority: optional
+Maintainer: Eugenio Paolantonio (g7) <me@medesimo.eu>
+Build-Depends: dh-python, python3, debhelper (>= 8.0.0)
+X-Python3-Version: >= 3.4
+Standards-Version: 3.9.5
+Homepage: http://github.com/semplice/vera-control-center-module-updates
+Vcs-Git: git://github.com/semplice/vera-control-center-module-updates.git
+Vcs-Browser: https://github.com/semplice/vera-control-center-module-updates
+
+Package: vera-control-center-module-updates
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, channels, channels-vendor-semplice,
+ python3-quickstart, python3-gi, gir1.2-gtk-3.0, gir1.2-glib-2.0,
+ vera-control-center
+Breaks: ${python3:Breaks}
+Description: Channel support -- vera-control-center module
+ channels is a tool that permits to easily manage update channels on
+ Semplice.
+ .
+ This package contains the configuration module for vera-control-center.

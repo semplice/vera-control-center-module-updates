@@ -22,6 +22,8 @@
 from veracc.widgets.UnlockBar import UnlockBar, ActionResponse
 from gi.repository import Gio, GObject, Gtk
 
+import os
+
 import quickstart
 
 # As this is a separate VeraCC module, we need to load translations separately...
@@ -30,6 +32,8 @@ TRANSLATION.load()
 TRANSLATION.bind_also_locale()
 
 _ = TRANSLATION._
+
+VARIANT_FILE = "/etc/semplice_variant"
 
 BASE_PROVIDER = "semplice-base.provider"
 CURRENT_CHANNEL = "semplice-current"
@@ -49,6 +53,9 @@ class Scene(quickstart.scenes.BaseScene):
 	
 	# Used to define the currently-enabled semplice-base channel. 
 	base_channel_enabled = None
+	
+	# Current variant
+	current_variant = "current"
 	
 	building = False
 	
@@ -76,6 +83,7 @@ class Scene(quickstart.scenes.BaseScene):
 		renderer = Gtk.CellRendererText()
 		self.objects.selected_channel.pack_start(renderer, True)
 		self.objects.selected_channel.add_attribute(renderer, "text", 1)
+		self.objects.selected_channel.add_attribute(renderer, "sensitive", 2)
 		
 		# Ensure that the updates_frame is not sensitive when the settings
 		# are locked...
@@ -177,7 +185,8 @@ class Scene(quickstart.scenes.BaseScene):
 			itr = self.objects.semplice_base_channels.append(
 				[
 					channel,
-					details["name"] if "name" in details else channel
+					details["name"] if "name" in details else channel,
+					False if self.current_variant == "current" and channel != CURRENT_CHANNEL else True
 				]
 			)
 			
@@ -193,6 +202,11 @@ class Scene(quickstart.scenes.BaseScene):
 		"""
 		Fired when the scene has been called.
 		"""
+		
+		# Load current variant
+		if os.path.exists(VARIANT_FILE):
+			with open(VARIANT_FILE, "r") as f:
+				self.current_variant = f.read().strip()
 
 		# Enter in the bus
 		self.bus_cancellable = Gio.Cancellable()

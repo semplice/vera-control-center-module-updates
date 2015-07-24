@@ -1,10 +1,15 @@
 [Desktop Entry]
-X-VeraCC-Section=System
-Comment=Manage update preferences
-Name[it]=Aggiornamenti
-Comment[it]=Gestisci le preferenze degli aggiornamenti
-Name=Updates
+Comment[lt]=Tvarkyti atnaujinimo nuostatas
 Keywords[it]=Aggiornamenti;Sviluppo;Canali
+X-VeraCC-Section=System
+Name[it]=Aggiornamenti
+Name[es]=Actualizaciones
+Name[lt]=Atnaujinimai
 Icon=update-manager
+Comment=Manage update preferences
+Comment[it]=Gestisci le preferenze degli aggiornamenti
 Keywords=Updates;Development;Channels
+Keywords[es]=Actualizaciones;Desarrollo;Canales
+Name=Updates
+Comment[es]=Administrar preferencias de actualización
 

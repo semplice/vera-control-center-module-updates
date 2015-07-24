@@ -1,3 +1,10 @@
+vera-control-center-module-updates (0.1.1+jethro0-1) unstable; urgency=medium
+
+  * [translations] Updated.
+  * [updates] Temporairly disable channel switch to current if the variant is workstation.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Fri, 24 Jul 2015 16:13:47 +0200
+
 vera-control-center-module-updates (0.1.1-1) unstable; urgency=medium
 
   * [updates] Disable workstation channels if the semplice_variant is "current".

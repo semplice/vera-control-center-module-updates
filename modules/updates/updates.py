@@ -186,7 +186,10 @@ class Scene(quickstart.scenes.BaseScene):
 				[
 					channel,
 					details["name"] if "name" in details else channel,
-					False if self.current_variant == "current" and channel != CURRENT_CHANNEL else True
+					False if (
+						(self.current_variant == "current" and channel != CURRENT_CHANNEL) or
+						(self.current_variant == "workstation" and channel == CURRENT_CHANNEL)
+					) else True
 				]
 			)
 			

@@ -9,9 +9,9 @@ msgstr ""
 "Project-Id-Version: vera-control-center-module-updates\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-07-07 00:22+0200\n"
-"PO-Revision-Date: 2015-07-08 22:06+0000\n"
+"PO-Revision-Date: 2015-07-30 16:58+0000\n"
 "Last-Translator: Moo\n"
-"Language-Team: Lithuanian (http://www.transifex.com/projects/p/vera-control-center-module-updates/language/lt/)\n"
+"Language-Team: Lithuanian (http://www.transifex.com/semplice/vera-control-center-module-updates/language/lt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: modules/updates/updates.desktop:4
 msgid "update-manager"
-msgstr ""
+msgstr "update-manager"
 
 #: modules/updates/updates.desktop:7
 msgid "Manage update preferences"
@@ -28,7 +28,7 @@ msgstr "Tvarkyti atnaujinimo nuostatas"
 
 #: modules/updates/updates.desktop:9
 msgid "Updates;Development;Channels"
-msgstr ""
+msgstr "Atnaujinimai;Kūrimas;Kanalai"
 
 #: modules/updates/updates.desktop:10
 msgid "Updates"
@@ -36,7 +36,7 @@ msgstr "Atnaujinimai"
 
 #: modules/updates/updates.glade.h:1
 msgid "Update channel"
-msgstr ""
+msgstr "Atnaujinimų kanalas"
 
 #: modules/updates/updates.glade.h:2
 msgid "Enable proposed updates"

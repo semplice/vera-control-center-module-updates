@@ -20,7 +20,12 @@
 #
 
 from veracc.widgets.UnlockBar import UnlockBar, ActionResponse
-from gi.repository import Gio, GObject, Gtk
+from gi.repository import Gio, GObject, Gtk, Pango
+
+from .widgets import UpdateList, UpdateItem
+
+from .core.common import Database
+from .core.handler import UpdateHandler
 
 import os
 
@@ -48,7 +53,8 @@ class Scene(quickstart.scenes.BaseScene):
 	
 	events = {
 		"changed" : ["selected_channel"],
-		"toggled" : ["enable_proposed_updates", "enable_development_updates"]
+		"toggled" : ["enable_proposed_updates", "enable_development_updates"],
+		"clicked" : ["refresh_button"]
 	}
 	
 	# Used to define the currently-enabled semplice-base channel. 
@@ -58,6 +64,8 @@ class Scene(quickstart.scenes.BaseScene):
 	current_variant = "current"
 	
 	building = False
+	
+	package_transactions = {}
 	
 	def on_scene_asked_to_close(self):
 		"""
@@ -74,10 +82,26 @@ class Scene(quickstart.scenes.BaseScene):
 		"""
 				
 		self.scene_container = self.objects.main
+		
+		# Connect to the handler
+		self.handler = UpdateHandler()
+
+		# Set appropriate font size and weight for the "Distribution upgrades" label
+		context = self.objects.distribution_upgrade_label.create_pango_context()
+		desc = context.get_font_description()
+		desc.set_weight(Pango.Weight.LIGHT) # Weight
+		desc.set_size(Pango.SCALE*13) # Size
+		self.objects.distribution_upgrade_label.override_font(desc)
+		
+		# Do the same for the "Application updates" label
+		self.objects.application_updates_label.override_font(desc)
+		
+		# ...and for the "The software is up-to-date" one
+		self.objects.software_uptodate_container.override_font(desc)
 
 		# Create unlockbar
 		self.unlockbar = UnlockBar("org.semplicelinux.channels.manage")
-		self.objects.main.pack_start(self.unlockbar, False, False, 0)
+		self.objects.summary.pack_start(self.unlockbar, False, False, 0)
 
 		# Set-up channel combobox
 		renderer = Gtk.CellRendererText()
@@ -85,13 +109,280 @@ class Scene(quickstart.scenes.BaseScene):
 		self.objects.selected_channel.add_attribute(renderer, "text", 1)
 		self.objects.selected_channel.add_attribute(renderer, "sensitive", 2)
 		
+		# Create update list
+		self.update_list = UpdateList()
+		self.objects.application_updates_scroll.add(self.update_list)
+		#self.objects.application_updates_content.pack_start(self.update_list, True, True, 5)
+		#self.update_list.prepend(Gtk.Label("HAAA"))
+		#print(len(self.update_list), self.update_list.props.empty, self.update_list.props.selection_mode)
+		self.update_list.show_all()
+		
+		# Open AppStream database
+		Database.open()
+		
+		#for item in ["glade", "pokerth", "banshee", "gnome-software"]:
+		#	self.update_list.add_item(-1, item, "XX", "upgrade", True)
+		
+		# FIXME
+		self.objects.distribution_upgrade.hide()
+		
+		# Connect to status-toggled
+		self.update_list.connect("status-toggled", self.on_status_toggled)
+		
+		# Connect to update found:
+		self.handler.connect("update-found", self.on_update_found)
+		
+		# Connect to package-status-changed
+		self.handler.connect("package-status-changed", self.on_package_status_changed)
+		
+		# Connect to package-fetch signals
+		self.handler.connect("package-fetch-started", self.on_package_fetch_started)
+		self.handler.connect("package-fetch-failed", self.on_package_fetch_failed)
+		self.handler.connect("package-fetch-finished", self.on_package_fetch_finished)
+
+		# React when checking changes
+		self.handler.connect("notify::checking", self.on_checking_changed)
+		
+		# React when refreshing
+		self.handler.connect("notify::refreshing", self.on_refreshing_changed)
+		
+		# React when downloading
+		self.handler.connect("notify::downloading", self.on_downloading_changed)
+		
+		# React when we know the total size to download
+		self.handler.connect("notify::update-required-download", self.on_update_required_download_changed)
+		
 		# Ensure that the updates_frame is not sensitive when the settings
 		# are locked...
 		self.unlockbar.bind_property(
 			"lock",
-			self.objects.updates_frame,
+			self.objects.settings_frame,
 			"sensitive",
 			GObject.BindingFlags.INVERT_BOOLEAN
+		)
+		
+		# Show the up-to-date container if the update list is empty
+		self.update_list.bind_property(
+			"empty",
+			self.objects.software_uptodate_container,
+			"visible",
+			GObject.BindingFlags.DEFAULT | GObject.BindingFlags.SYNC_CREATE
+		)
+		self.update_list.bind_property(
+			"empty",
+			self.objects.application_updates_scroll,
+			"visible",
+			GObject.BindingFlags.INVERT_BOOLEAN | GObject.BindingFlags.SYNC_CREATE
+		)
+		self.update_list.bind_property(
+			"empty",
+			self.objects.application_updates_actions,
+			"visible",
+			GObject.BindingFlags.INVERT_BOOLEAN | GObject.BindingFlags.SYNC_CREATE
+		)
+				
+		# Show download indicators when the cache is refreshing
+		self.handler.bind_property(
+			"cache-operation",
+			self.objects.spinner,
+			"active",
+			GObject.BindingFlags.SYNC_CREATE
+		)
+		self.handler.bind_property(
+			"download-operation",
+			self.objects.download_rate,
+			"visible",
+			GObject.BindingFlags.SYNC_CREATE
+		)
+		self.handler.bind_property(
+			"download-operation",
+			self.objects.download_eta,
+			"visible",
+			GObject.BindingFlags.SYNC_CREATE
+		)
+		self.handler.bind_property(
+			"download-rate",
+			self.objects.download_rate,
+			"label",
+			GObject.BindingFlags.DEFAULT
+		)
+		self.handler.bind_property(
+			"download-eta",
+			self.objects.download_eta,
+			"label",
+			GObject.BindingFlags.DEFAULT
+		)
+		self.handler.bind_property(
+			"download-current-item",
+			self.objects.download_rate,
+			"tooltip_text",
+			GObject.BindingFlags.DEFAULT
+		)
+		self.handler.bind_property(
+			"cache-operation",
+			self.objects.refresh_button,
+			"sensitive",
+			GObject.BindingFlags.INVERT_BOOLEAN | GObject.BindingFlags.SYNC_CREATE
+		)
+		self.handler.bind_property(
+			"cache-operation",
+			self.update_list,
+			"sensitive",
+			GObject.BindingFlags.INVERT_BOOLEAN | GObject.BindingFlags.SYNC_CREATE
+		)
+		self.handler.bind_property(
+			"cache-operation",
+			self.objects.application_updates_actions,
+			"sensitive",
+			GObject.BindingFlags.INVERT_BOOLEAN | GObject.BindingFlags.SYNC_CREATE
+		)
+		
+		# Remove sensitiveness on checkbuttons when downloading
+		self.handler.bind_property(
+			"downloading",
+			self.update_list.package_checkbox,
+			"sensitive",
+			GObject.BindingFlags.INVERT_BOOLEAN | GObject.BindingFlags.SYNC_CREATE
+		)
+		
+		# Update labels in the action buttons accordingly to the current mode
+		self.handler.bind_property(
+			"download-operation-label",
+			self.objects.download_button,
+			"label",
+			GObject.BindingFlags.SYNC_CREATE
+		)
+		self.handler.bind_property(
+			"install-operation-label",
+			self.objects.install_button,
+			"label",
+			GObject.BindingFlags.SYNC_CREATE
+		)
+		
+		# Check for updates
+		if not self.handler.props.refreshing:
+			self.handler.check()
+		
+		# Downloading? Enable the mode
+		if self.handler.props.downloading:
+			#self.on_downloading_changed()
+			self.update_list.enable_downloading_mode()
+	
+	@quickstart.threads.on_idle
+	def on_update_found(self, handler, id, name, version, reason, status, size):
+		"""
+		Fired when an update has been found.
+		"""
+		
+		self.update_list.add_item(id, name, version, reason, status, size)
+	
+	@quickstart.threads.on_idle
+	def on_package_status_changed(self, handler, id, reason):
+		"""
+		Fired when a package status has been changed.
+		"""
+		
+		print("STATUS!")
+		self.update_list.update_status(id, reason)
+	
+	def on_package_fetch_started(self, handler, transaction_id, description, shortdesc):
+		"""
+		Fired when a package is being fetched.
+		"""
+		
+		if not shortdesc in self.update_list.names_with_id:
+			# wat?
+			return
+
+		# Get package id from the UpdateList			
+		id = self.update_list.names_with_id[shortdesc]
+		
+		# Associate transaction with the id
+		self.package_transactions[transaction_id] = id
+		
+		# Finally update the status on the list
+		self.update_list.set_downloading(id, True)
+	
+	def on_package_fetch_failed(self, handler, transaction_id):
+		"""
+		Fired when a package failed to download.
+		"""
+		
+		# FIXME: should notify the user!
+		
+		if not transaction_id in self.package_transactions:
+			return
+		
+		self.update_list.set_downloading(self.package_transactions[transaction_id], False)
+
+	def on_package_fetch_finished(self, handler, transaction_id):
+		"""
+		Fired when a package has been downloaded.
+		"""
+				
+		if not transaction_id in self.package_transactions:
+			return
+		
+		self.update_list.set_downloading(self.package_transactions[transaction_id], False)
+	
+	def on_downloading_changed(self, handler, value):
+		"""
+		Fired when handler's downloading property changed.
+		"""
+		
+		if handler.props.downloading:
+			self.update_list.enable_downloading_mode()
+		else:
+			self.update_list.disable_downloading_mode()
+			self.package_transactions = []
+	
+	def on_status_toggled(self, updatelist, id, reason):
+		"""
+		Fired when a package status changed locally.
+		"""
+		
+		print(id, reason)
+		
+		self.handler.change_status(id, reason)
+	
+	def on_refresh_button_clicked(self, button):
+		"""
+		Fired when the refresh button has been clicked.
+		"""
+		
+		# Clear list
+		self.update_list.clear()
+		
+		self.handler.refresh()
+	
+	def on_checking_changed(self, handler, value):
+		"""
+		Fired when handler's checking property changed.
+		"""
+		
+		print("Checking changed!")
+		
+		if not self.handler.props.checking:
+			# Expand the update_list
+			self.update_list.expand_all()
+	
+	def on_refreshing_changed(self, handler, value):
+		"""
+		Fired when handler's refreshing property changed.
+		"""
+		
+		if not self.handler.props.refreshing:
+			# Check for updates
+			self.handler.check()
+	
+	def on_update_required_download_changed(self, handler, value):
+		"""
+		Fired when handler's update-required-download property changed.
+		"""
+		
+		self.objects.download_size.show()
+		self.objects.download_size.set_text(
+			_("Total download size: %s") % self.handler.props.update_required_download
 		)
 
 	def on_selected_channel_changed(self, combobox):

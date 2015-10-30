@@ -39,10 +39,10 @@ class UpdateItem(Gtk.Box):
 	
 	--------------------------------------------------------------------
 	| BOX ICON NAME - VERSION                  CHANGELOG SIZE/PROGRESS |
-    |                                                                  |
-    |     ComponentItem1 - VERSION                       SIZE/PROGRESS |
-    |     ComponentItem2 - VERSION                       SIZE/PROGRESS |
-    |     ComponentItem3 - VERSION                       SIZE/PROGRESS |
+	|                                                                  |
+	|     ComponentItem1 - VERSION                       SIZE/PROGRESS |
+	|     ComponentItem2 - VERSION                       SIZE/PROGRESS |
+	|     ComponentItem3 - VERSION                       SIZE/PROGRESS |
     --------------------------------------------------------------------
 	"""
 

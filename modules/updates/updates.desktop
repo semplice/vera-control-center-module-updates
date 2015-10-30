@@ -1,15 +1,19 @@
 [Desktop Entry]
+Keywords[hu]=Frisítések;Fejlesztés;Csatornák
+Keywords[es]=Actualizaciones;Desarrollo;Canales
+Name[hu]=Frissítések
+Keywords[lt]=Atnaujinimai;Kūrimas;Kanalai
 Comment[lt]=Tvarkyti atnaujinimo nuostatas
-Keywords[it]=Aggiornamenti;Sviluppo;Canali
-X-VeraCC-Section=System
-Name[it]=Aggiornamenti
-Name[es]=Actualizaciones
 Name[lt]=Atnaujinimai
+Name[it]=Aggiornamenti
+X-VeraCC-Section=System
+Comment[hu]=Frissítések beállítása
 Icon=update-manager
 Comment=Manage update preferences
 Comment[it]=Gestisci le preferenze degli aggiornamenti
-Keywords=Updates;Development;Channels
-Keywords[es]=Actualizaciones;Desarrollo;Canales
 Name=Updates
+Keywords[it]=Aggiornamenti;Sviluppo;Canali
+Name[es]=Actualizaciones
+Keywords=Updates;Development;Channels
 Comment[es]=Administrar preferencias de actualización
 

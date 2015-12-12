@@ -19,7 +19,92 @@
 #    Eugenio "g7" Paolantonio <me@medesimo.eu>
 #
 
+import os
+import time
+
 from gi.repository import AppStream
 
 Database = AppStream.Database.new() 
 #Database.set_database_path("/var/cache/app-info")
+
+class Follower:
+	
+	"""
+	An equivalent of tail -f.
+	
+	Note: this performs checks on inodes, so it doesn't react when a
+	file truncation happens (but does properly reload the file on a log
+	rotation)
+	"""
+	
+	def __init__(self, path):
+		"""
+		Initializes the class.
+		
+		`path` is the file path to open.
+		"""
+		
+		self.path = path
+		self.file = None
+		
+		self._stop = False
+		
+		self._load()
+	
+	def stop(self):
+		"""
+		Stops the tailer.
+		"""
+		
+		self._stop = True
+	
+	def _load(self):
+		"""
+		Loads the file.
+		"""
+		
+		if self.file:
+			self.file.close()
+		
+		self.file = open(self.path)
+		self.inode = os.stat(self.path).st_ino
+		self.position = 0
+	
+	def __iter__(self):
+		""""
+		Returns self, as per the iterator protocol.
+		"""
+		
+		return self
+	
+	def __next__(self):
+		"""
+		Iterates over the file.
+		"""
+		
+		line = None
+		
+		while not line:
+			
+			if self._stop:
+				# Stop
+				self.file.close()
+				raise StopIteration
+			
+			current_position = self.file.tell()
+			line = self.file.readline()
+			
+			if line:
+				return line
+			else:
+				# Check for rotation
+				try:
+					if os.stat(self.path).st_ino != self.inode:
+						self._load()
+						continue
+				except FileNotFoundError:
+					# May happen during rotation
+					pass
+					
+				time.sleep(1)
+				self.file.seek(current_position)

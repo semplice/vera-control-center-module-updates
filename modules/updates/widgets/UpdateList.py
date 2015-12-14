@@ -233,15 +233,15 @@ class UpdateList(Gtk.TreeView):
 		Adds an item.
 		"""
 		
-		self.component = Database.find_components_by_term("pkg:%s" % package_name)
+		self.component = Database.find_components("pkg:%s" % package_name)
 		if self.component:
 			self.component = self.component[0] # we search by package name
 		
 		icon = PACKAGE_ICON_NAME
 		if self.component:
-			url = self.component.get_icon_url(ICON_SEARCH_WIDTH, ICON_SEARCH_HEIGHT)
-			if url:				
-				icon_name = ".".join(os.path.basename(url).replace("%s_" % package_name, "", 1).split(".")[:-1])
+			as_icon = self.component.get_icon_by_size(ICON_SEARCH_WIDTH, ICON_SEARCH_HEIGHT)
+			if as_icon:
+				icon_name = ".".join(os.path.basename(as_icon.get_name()).replace("%s_" % package_name, "", 1).split(".")[:-1])
 				if icon_theme.has_icon(icon_name):
 					icon = icon_name
 				#elif url.startswith("/"):
@@ -311,6 +311,15 @@ class UpdateList(Gtk.TreeView):
 		
 		if self.download_timeout > 0:
 			GLib.source_remove(self.download_timeout)
+			self.download_timeout = 0
+		
+		# Restore downloading status on currently_downloading items
+		for itr in self.currently_downloading:
+			# Spinner
+			self.model.set_value(itr, 10, True)
+			
+			# Downloading
+			self.model.set_value(itr, 7, False)
 		
 		self.currently_downloading = []
 		self.download_pulse_value = 0

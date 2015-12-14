@@ -111,7 +111,7 @@ class UpdateList(Gtk.TreeView):
 		self.package_column.add_attribute(self.package_icon, "icon_name", 2)
 
 		self.version_spinner = Gtk.CellRendererSpinner()
-		self.package_column.pack_start(self.version_spinner, True)
+		self.package_column.pack_start(self.version_spinner, False)
 		self.package_column.add_attribute(self.version_spinner, "visible", 7)
 		self.package_column.add_attribute(self.version_spinner, "active", 7)
 		self.package_column.add_attribute(self.version_spinner, "pulse", 8)

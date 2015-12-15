@@ -187,6 +187,8 @@ setup(
 	packages=[
 		'modules',
 		'modules.updates'
+		'modules.updates.core',
+		'modules.updates.widgets',
 	],
 	data_files=[
 		(

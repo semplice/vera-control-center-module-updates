@@ -2,6 +2,7 @@
 <!-- Generated with glade 3.19.0 -->
 <interface>
   <requires lib="gtk+" version="3.12"/>
+  <object class="GtkTextBuffer" id="details_buffer"/>
   <object class="GtkListStore" id="liststore1"/>
   <object class="GtkListStore" id="semplice_base_channels">
     <columns>
@@ -346,45 +347,100 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkBox" id="software_uptodate_container">
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <object class="GtkStack" id="application_updates_status">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">center</property>
-                            <property name="valign">center</property>
-                            <property name="hexpand">True</property>
-                            <property name="vexpand">True</property>
-                            <property name="orientation">vertical</property>
+                            <property name="transition_type">crossfade</property>
                             <child>
-                              <object class="GtkImage" id="image3">
+                              <object class="GtkBox" id="application_updates_checking_container">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="pixel_size">128</property>
-                                <property name="icon_name">process-completed-symbolic</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">10</property>
+                                <child>
+                                  <object class="GtkImage" id="image4">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixel_size">128</property>
+                                    <property name="icon_name">system-run-symbolic</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="application_updates_checking_label">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Please wait</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
+                                <property name="name">page0</property>
+                                <property name="title" translatable="yes">page0</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="software_uptodate_label">
-                                <property name="visible">True</property>
+                              <object class="GtkBox" id="software_uptodate_container">
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">The software is up-to-date.</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">10</property>
+                                <child>
+                                  <object class="GtkImage" id="image3">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixel_size">128</property>
+                                    <property name="icon_name">process-completed-symbolic</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="software_uptodate_label">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">The software is up to date.</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
+                                <property name="name">page1</property>
+                                <property name="title" translatable="yes">page1</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
+                            <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">2</property>
+                            <property name="position">3</property>
                           </packing>
                         </child>
                       </object>
@@ -509,6 +565,107 @@
           <packing>
             <property name="name">page0</property>
             <property name="title" translatable="yes">page0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="install_scene">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="halign">center</property>
+            <property name="valign">center</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkLabel" id="install_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_bottom">10</property>
+                <property name="label" translatable="yes">Semplice is installing the updates</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkStack" id="progress_stack">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">12</property>
+                <property name="margin_right">12</property>
+                <property name="margin_top">22</property>
+                <property name="margin_bottom">22</property>
+                <property name="transition_type">crossfade</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="details_scrolled">
+                    <property name="width_request">550</property>
+                    <property name="height_request">250</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkTextView" id="details_textview">
+                        <property name="width_request">450</property>
+                        <property name="height_request">200</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="editable">False</property>
+                        <property name="wrap_mode">word</property>
+                        <property name="left_margin">5</property>
+                        <property name="right_margin">5</property>
+                        <property name="buffer">details_buffer</property>
+                        <property name="overwrite">True</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="name">page1</property>
+                    <property name="title" translatable="yes">page1</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButtonBox" id="buttonbox4">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_top">10</property>
+                <property name="orientation">vertical</property>
+                <property name="layout_style">start</property>
+                <child>
+                  <object class="GtkToggleButton" id="show_details_button">
+                    <property name="label" translatable="yes">Show details</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="name">page1</property>
+            <property name="title" translatable="yes">page1</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>

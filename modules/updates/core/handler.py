@@ -81,6 +81,13 @@ class UpdateHandler(GObject.Object):
 			False,
 			GObject.PARAM_READABLE,
 		),
+		"installing" : (
+			GObject.TYPE_BOOLEAN,
+			"Installing",
+			"True if channels is installing the updates, False if not.",
+			False,
+			GObject.PARAM_READABLE,
+		),
 		"download-operation-label" : (
 			GObject.TYPE_STRING,
 			"Download operation label",
@@ -94,7 +101,14 @@ class UpdateHandler(GObject.Object):
 			"The text shown in the 'Download & Install' button.",
 			"",
 			GObject.PARAM_READABLE
-		),			
+		),
+		"install-scene-label" : (
+			GObject.TYPE_STRING,
+			"Install scene label",
+			"The text shown in the install scene label.",
+			_("Semplice is installing the updates"),
+			GObject.PARAM_READWRITE
+		),
 		"download-current-item" : (
 			GObject.TYPE_STRING,
 			"Current download item",
@@ -116,13 +130,29 @@ class UpdateHandler(GObject.Object):
 			"",
 			GObject.PARAM_READWRITE
 		),
+		"download-completed" : (
+			GObject.TYPE_BOOLEAN,
+			"Download completed flag",
+			"True if the download has been completed (lazily obtained)",
+			False,
+			GObject.PARAM_READABLE
+		),
 		"update-required-download" : (
 			GObject.TYPE_STRING,
 			"Update download size",
 			"The update download size.",
 			"",
 			GObject.PARAM_READWRITE
-		)
+		),
+		"install-progress" : (
+			GObject.TYPE_FLOAT,
+			"Installation progress",
+			"The current installation progress.",
+			0.0,
+			1.0,
+			0.0,
+			GObject.PARAM_READWRITE
+		),
 	}
 	
 	__gsignals__ = {
@@ -130,6 +160,16 @@ class UpdateHandler(GObject.Object):
 			GObject.SIGNAL_RUN_FIRST,
 			None,
 			(int, str, str, str, bool, str)
+		),
+		"lock-failed" : (
+			GObject.SIGNAL_RUN_FIRST,
+			None,
+			()
+		),
+		"generic-failure" : (
+			GObject.SIGNAL_RUN_FIRST,
+			None,
+			(str, str)
 		),
 		"package-status-changed" : (
 			GObject.SIGNAL_RUN_FIRST,
@@ -151,6 +191,21 @@ class UpdateHandler(GObject.Object):
 			None,
 			(int,)
 		),
+		"package-install-failed" : (
+			GObject.SIGNAL_RUN_FIRST,
+			None,
+			()
+		),
+		#"package-install-started" : (
+		#	GObject.SIGNAL_RUN_FIRST,
+		#	None,
+		#	()
+		#),
+		#"package-install-finished" : (
+		#	GObject.SIGNAL_RUN_FIRST,
+		#	None,
+		#	()
+		#)
 	}
 	
 	download_rate_timeout = 0
@@ -197,12 +252,29 @@ class UpdateHandler(GObject.Object):
 		
 		self.Updates.Refresh()
 	
-	def check(self):
+	def fetch(self, trigger_installation=False):
+		"""
+		Fetches the packages.
+		"""
+		
+		if not trigger_installation:
+			self.Updates.Fetch()
+		else:
+			self.Updates.FetchInstall()
+	
+	def fetch_stop(self):
+		"""
+		Stops the package fetching.
+		"""
+		
+		self.Updates.FetchStop()
+	
+	def check(self, force=False):
 		"""
 		Checks for updates.
 		"""
 		
-		self.Updates.CheckUpdates("(bb)", True, False) # FIXME: Handle stable
+		self.Updates.CheckUpdates("(bb)", True, force) # FIXME: Handle stable
 	
 	def change_status(self, id, reason):
 		"""
@@ -254,10 +326,13 @@ class UpdateHandler(GObject.Object):
 			# Get update infos if the check has been completed
 			if signal == "UpdateCheckStopped":
 				self.notify("update-required-download")
+				self.notify("download-completed")
+				self.notify("install-operation-label") # FIXME
 		elif signal in ("PackageAcquireStarted", "PackageAcquireStopped"):
 			# Send notification on downloading property
 			self.notify("downloading")
 			self.notify("download-operation")
+			self.notify("download-completed")
 			
 			self.notify("download-operation-label")
 			self.notify("install-operation-label")
@@ -276,6 +351,34 @@ class UpdateHandler(GObject.Object):
 			
 			# Update download size
 			self.notify("update-required-download")
+		elif signal == "PackageInstallProgressChanged":
+			# Package install progress changed
+			print(params[0], round(params[0]) / 100.0)
+			self.set_property("install-progress", params[0] / 100.0)
+		elif signal == "PackageInstallStarted":
+			# Package install progress started
+			self.notify("installing")
+			
+			self.set_property("install-progress", 0.0)
+			self.set_property("install-scene-label", _("Semplice is installing the updates"))
+		elif signal == "PackageInstallFinished":
+			# Package install progress finished
+			self.notify("installing")
+			
+			self.set_property("install-progress", 1.0) # assume 100%
+			self.set_property("install-scene-label", _("System update completed"))
+		elif signal == "PackageInstallFailed":
+			# Package install progress failed
+			self.emit("package-install-failed")
+			self.notify("installing")
+			
+			self.set_property("install-scene-label", "System update failed")
+		elif signal == "LockFailed":
+			# APT Lock failed
+			self.emit("lock-failed")
+		elif signal == "GenericFailure":
+			# Generic failure
+			self.emit("generic-failure", *params)
 		
 		# Remove the download rate refresh operation if it has stopped
 		if signal in ("CacheUpdateStopped", "PackageAcquireStopped") and self.download_rate_timeout > 0:
@@ -309,8 +412,8 @@ class UpdateHandler(GObject.Object):
 				return _("Download")
 		elif property.name == "install-operation-label":
 			# FIXME: Handle situations where the operation has been tirggered
-			if self.props.downloading:
-				return _("Trigger installation")
+			if self.props.downloading or self.props.download_completed:
+				return _("Install")
 			else:
 				return _("Download & Install")
 		elif property.name == "update-required-download":
@@ -319,18 +422,23 @@ class UpdateHandler(GObject.Object):
 			return self.Properties.Get("(ss)", IFACE, "CacheOpening")
 		elif property.name == "checking":
 			return self.Properties.Get("(ss)", IFACE, "Checking")
+		elif property.name == "installing":
+			return self.Properties.Get("(ss)", IFACE, "Installing")
 		elif property.name == "cache-operation":
 			# cache_operation == cache_opening || refreshing
-			if self.props.refreshing or self.props.cache_opening or self.props.checking:
-				return True
-			else:
-				return False
+			return (self.props.refreshing or self.props.cache_opening or self.props.checking)
 		elif property.name == "download-operation":
 			# download_operation == downloading || refreshing
 			return (self.props.downloading or self.props.refreshing)
+		elif property.name == "download-completed":
+			return (self.props.update_required_download == "0 B")
 		else:
 			#return GObject.Object.do_get_property(self, property)
-			return self._properties[property.name]
+			return (
+				self._properties[property.name]
+				if property.name in self._properties
+				else property.default_value
+			)
 	
 	def do_set_property(self, property, value):
 		"""

@@ -21,8 +21,10 @@
 
 __all__ = [
 	"UpdateList",
-	"UpdateItem"
+	"UpdateItem",
+	"CircularProgressBar"
 ]
 
 from .UpdateList import UpdateList
 from .UpdateItem import UpdateItem
+from .CircularProgressBar import CircularProgressBar

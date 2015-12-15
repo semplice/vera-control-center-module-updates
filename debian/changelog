@@ -1,3 +1,21 @@
+vera-control-center-module-updates (0.70.0-1) unstable; urgency=medium
+
+  * [translations] Updated.
+  * [translations] Updated.
+  * [updates] WIP: Initial channels.updates frontend
+  * [UpdateItem] Properly indentate class documentation
+  * [translations] Dump again translations to the desktop entry
+  * [core] common: implement a rotation-aware file follower
+  * [UpdateList] Update to AppStream 0.9 API
+  * [UpdateList] Do not expand the package_checkbox
+  * [widgets] Added CircularProgressBar
+  * [updates] Report package installation status
+  * [setup] Ensure to install .core and .widgets
+  * [setup] Updated dependency list
+  * [packaging] Updated Depends to match the new requirements
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Tue, 15 Dec 2015 18:27:53 +0100
+
 vera-control-center-module-updates (0.1.1-1) unstable; urgency=medium
 
   * [updates] Disable workstation channels if the semplice_variant is "current".

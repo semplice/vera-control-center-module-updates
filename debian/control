@@ -11,9 +11,19 @@ Vcs-Browser: https://github.com/semplice/vera-control-center-module-updates
 
 Package: vera-control-center-module-updates
 Architecture: all
-Depends: ${misc:Depends}, ${python3:Depends}, channels, channels-vendor-semplice,
- python3-quickstart, python3-gi, gir1.2-gtk-3.0, gir1.2-glib-2.0,
- vera-control-center
+Depends: ${misc:Depends},
+         ${python3:Depends},
+         channels (>= 0.70.0),
+         channels-vendor-semplice,
+         python3-quickstart (>= 2.0.1),
+         python3-gi,
+         appstream,
+         gir1.2-gtk-3.0,
+         gir1.2-glib-2.0,
+         gir1.2-appstream,
+         gir1.2-pango-1.0,
+         python-cairo,
+         vera-control-center
 Breaks: ${python3:Breaks}
 Description: Channel support -- vera-control-center module
  channels is a tool that permits to easily manage update channels on

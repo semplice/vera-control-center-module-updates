@@ -186,7 +186,7 @@ setup(
 	url='https://github.com/semplice/vera-control-center-module-updates',
 	packages=[
 		'modules',
-		'modules.updates'
+		'modules.updates',
 		'modules.updates.core',
 		'modules.updates.widgets',
 	],

@@ -13,7 +13,7 @@ Package: vera-control-center-module-updates
 Architecture: all
 Depends: ${misc:Depends},
          ${python3:Depends},
-         channels (>= 0.70.0),
+         channels (>= 0.70.1),
          channels-vendor-semplice,
          python3-quickstart (>= 2.0.1),
          python3-gi,

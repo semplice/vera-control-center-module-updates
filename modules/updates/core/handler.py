@@ -19,6 +19,8 @@
 #    Eugenio "g7" Paolantonio <me@medesimo.eu>
 #
 
+import os
+
 from gi.repository import GObject, GLib, Gio
 
 IFACE = "org.semplicelinux.channels.updates"
@@ -260,7 +262,7 @@ class UpdateHandler(GObject.Object):
 		if not trigger_installation:
 			self.Updates.Fetch()
 		else:
-			self.Updates.FetchInstall()
+			self.Updates.FetchInstall('(s)', os.environ["DISPLAY"])
 	
 	def fetch_stop(self):
 		"""

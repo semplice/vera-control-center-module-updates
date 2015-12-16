@@ -1,3 +1,10 @@
+vera-control-center-module-updates (0.70.2-1) unstable; urgency=medium
+
+  * [handler] Pass DISPLAY to the FetchInstall() call
+  * [packaging] Depend on channels >= 0.70.1 due to the FetchInstall change
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Wed, 16 Dec 2015 19:35:16 +0100
+
 vera-control-center-module-updates (0.70.1-1) unstable; urgency=medium
 
   * [setup] Properly separate the packages

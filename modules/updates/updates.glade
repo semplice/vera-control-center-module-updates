@@ -476,7 +476,7 @@
                                   <object class="GtkLabel" id="error_description">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">This may be temporary.
+                                    <property name="label" translatable="yes">This might be temporary.
 Please try checking again for updates in a few hours.</property>
                                     <property name="justify">center</property>
                                   </object>

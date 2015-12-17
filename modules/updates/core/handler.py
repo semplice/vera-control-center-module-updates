@@ -41,10 +41,24 @@ class UpdateHandler(GObject.Object):
 	_properties = {}
 	
 	__gproperties__ = {
+		"status-scene" : (
+			GObject.TYPE_STRING,
+			"Status scene",
+			"The status scene.",
+			"please-wait",
+			GObject.PARAM_READWRITE
+		),
 		"cache-operation" : (
 			GObject.TYPE_BOOLEAN,
 			"Cache operation",
 			"True if there is a cache operation, False if not.",
+			False,
+			GObject.PARAM_READABLE
+		),
+		"cache-failure" : (
+			GObject.TYPE_BOOLEAN,
+			"Cache failure",
+			"True if there was a problem during a cache operation, False if not.",
 			False,
 			GObject.PARAM_READABLE
 		),
@@ -173,6 +187,11 @@ class UpdateHandler(GObject.Object):
 			None,
 			(str, str)
 		),
+		"update-check-failed" : (
+			GObject.SIGNAL_RUN_FIRST,
+			None,
+			()
+		),
 		"package-status-changed" : (
 			GObject.SIGNAL_RUN_FIRST,
 			None,
@@ -246,6 +265,9 @@ class UpdateHandler(GObject.Object):
 		
 		# Handle DBus signals
 		self.Updates.connect("g-signal", self.on_dbus_signal_changed)
+		
+		# Handle cache-operation state
+		self.connect("notify::cache-operation", self.on_cache_operation_changed)
 	
 	def refresh(self):
 		"""
@@ -320,7 +342,7 @@ class UpdateHandler(GObject.Object):
 			# Send notification in cache_opening property
 			self.notify("cache-opening")
 			self.notify("cache-operation")
-		elif signal in ("UpdateCheckStarted", "UpdateCheckStopped"):
+		elif signal in ("UpdateCheckStarted", "UpdateCheckFailed", "UpdateCheckStopped"):
 			# Send notification on checking and cache-opening properties
 			self.notify("checking")
 			self.notify("cache-operation")
@@ -426,6 +448,8 @@ class UpdateHandler(GObject.Object):
 			return self.Properties.Get("(ss)", IFACE, "Checking")
 		elif property.name == "installing":
 			return self.Properties.Get("(ss)", IFACE, "Installing")
+		elif property.name == "cache-failure":
+			return self.Properties.Get("(ss)", IFACE, "CacheFailure")
 		elif property.name == "cache-operation":
 			# cache_operation == cache_opening || refreshing
 			return (self.props.refreshing or self.props.cache_opening or self.props.checking)
@@ -441,6 +465,23 @@ class UpdateHandler(GObject.Object):
 				if property.name in self._properties
 				else property.default_value
 			)
+	
+	def on_cache_operation_changed(self, handler, value):
+		"""
+		Fired when the cache-operation property has been changed.
+		"""
+		
+		status = self.props.cache_operation
+		
+		if not status and self.props.cache_failure:
+			# Failure
+			self.set_property("status-scene", "error")
+		elif not status:
+			# OK
+			self.set_property("status-scene", "up-to-date")
+		else:
+			# Waiting...
+			self.set_property("status-scene", "please-wait")
 	
 	def do_set_property(self, property, value):
 		"""

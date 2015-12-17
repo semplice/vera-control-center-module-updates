@@ -133,6 +133,10 @@ class Scene(quickstart.scenes.BaseScene):
 		# ...and for the "The software is up-to-date" one
 		self.objects.application_updates_status.override_font(desc)
 		
+		# ..and for the error_description
+		desc.set_size(Pango.SCALE*10)
+		self.objects.error_description.override_font(desc)
+		
 		# ...and for the "Semplice is installing the updates" one
 		desc.set_size(Pango.SCALE*20)
 		self.objects.install_label.override_font(desc)
@@ -216,17 +220,23 @@ class Scene(quickstart.scenes.BaseScene):
 			GObject.BindingFlags.DEFAULT | GObject.BindingFlags.SYNC_CREATE
 		)
 		self.handler.bind_property(
-			"cache-operation",
-			self.objects.application_updates_checking_container,
-			"visible",
+			"status-scene",
+			self.objects.application_updates_status,
+			"visible_child_name",
 			GObject.BindingFlags.DEFAULT | GObject.BindingFlags.SYNC_CREATE
 		)
-		self.objects.application_updates_checking_container.bind_property(
-			"visible",
-			self.objects.software_uptodate_container,
-			"visible",
-			GObject.BindingFlags.INVERT_BOOLEAN | GObject.BindingFlags.SYNC_CREATE
-		)
+		#self.handler.bind_property(
+		#	"cache-operation",
+		#	self.objects.application_updates_checking_container,
+		#	"visible",
+		#	GObject.BindingFlags.DEFAULT | GObject.BindingFlags.SYNC_CREATE
+		#)
+		#self.objects.application_updates_checking_container.bind_property(
+		#	"visible",
+		#	self.objects.software_uptodate_container,
+		#	"visible",
+		#	GObject.BindingFlags.INVERT_BOOLEAN | GObject.BindingFlags.SYNC_CREATE
+		#)
 		self.update_list.bind_property(
 			"empty",
 			self.objects.application_updates_scroll,

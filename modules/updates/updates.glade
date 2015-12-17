@@ -391,12 +391,13 @@
                                 </child>
                               </object>
                               <packing>
-                                <property name="name">page0</property>
-                                <property name="title" translatable="yes">page0</property>
+                                <property name="name">please-wait</property>
+                                <property name="title" translatable="yes">please-wait</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkBox" id="software_uptodate_container">
+                                <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">center</property>
                                 <property name="valign">center</property>
@@ -431,9 +432,65 @@
                                 </child>
                               </object>
                               <packing>
-                                <property name="name">page1</property>
-                                <property name="title" translatable="yes">page1</property>
+                                <property name="name">up-to-date</property>
+                                <property name="title" translatable="yes">up-to-date</property>
                                 <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox" id="error_container">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">10</property>
+                                <child>
+                                  <object class="GtkImage" id="image5">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixel_size">128</property>
+                                    <property name="icon_name">dialog-warning-symbolic</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="error_label">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">An error occurred</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="error_description">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">This may be temporary.
+Please try checking again for updates in a few hours.</property>
+                                    <property name="justify">center</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="name">error</property>
+                                <property name="title" translatable="yes">error</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                           </object>

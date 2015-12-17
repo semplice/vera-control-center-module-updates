@@ -179,7 +179,7 @@ setup(
 		"install": CustomInstall
 	},
 	name=APP_NAME,
-	version='0.70.2',
+	version='0.70.3',
 	description='Semplice update preferences',
 	author='Eugenio Paolantonio',
 	author_email='me@medesimo.eu',

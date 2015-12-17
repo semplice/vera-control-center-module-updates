@@ -1,3 +1,10 @@
+vera-control-center-module-updates (0.70.3-1) unstable; urgency=medium
+
+  * [updates, handler] Handle CacheFailures
+  * [packaging] Depend on channels >= 0.70.2
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Thu, 17 Dec 2015 13:41:18 +0100
+
 vera-control-center-module-updates (0.70.2-1) unstable; urgency=medium
 
   * [handler] Pass DISPLAY to the FetchInstall() call

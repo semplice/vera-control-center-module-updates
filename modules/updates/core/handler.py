@@ -426,7 +426,7 @@ class UpdateHandler(GObject.Object):
 			
 			# Refresh the download rate if value == True
 			if value == True and self.download_rate_timeout == 0:
-				self.download_rate_timeout = GLib.timeout_add(200, self.update_download_rate)
+				self.download_rate_timeout = GLib.timeout_add_seconds(2, self.update_download_rate)
 			
 			return value
 		elif property.name == "download-operation-label":

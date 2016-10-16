@@ -21,9 +21,10 @@
 
 import os
 
-from gi.repository import Gtk, AppStream
+from gi.repository import Gtk
 
-from ..core.common import Database
+# FIXME pending AppStream API update. See #4
+#from ..core.common import Database
 
 ICON_SEARCH_WIDTH = 64
 ICON_SEARCH_HEIGHT = 64
@@ -54,9 +55,12 @@ class UpdateItem(Gtk.Box):
 		super().__init__(orientation=Gtk.Orientation.VERTICAL)
 		
 		# Get the AppStream component if available
-		self.component = Database.find_components_by_term("pkg:%s" % package_name)
-		if self.component:
-			self.component = self.component[0] # we search by package name
+		#self.component = Database.find_components_by_term("pkg:%s" % package_name)
+		#if self.component:
+		#	self.component = self.component[0] # we search by package name
+		
+		# FIXME pending update to newer AppStream API. See #4
+		self.component = None
 		
 		# Main container
 		self.main_container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)

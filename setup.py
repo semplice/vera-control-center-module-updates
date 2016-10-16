@@ -203,7 +203,8 @@ setup(
 		'gi.repository.Gio',
 		'gi.repository.GObject',
 		'gi.repository.Gtk',
-		'gi.repository.AppStream',
+		# FIXME pending AppStream API update. See #4
+		#'gi.repository.AppStream',
 		'gi.repository.Pango',
 		'gi.repository.PangoCairo',
 		'cairo',

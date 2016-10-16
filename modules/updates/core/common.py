@@ -22,9 +22,10 @@
 import os
 import time
 
-from gi.repository import AppStream
-
-Database = AppStream.Database.new() 
+# FIXME pending AppStream API update. See #4
+#from gi.repository import AppStream
+#
+#Database = AppStream.Database.new() 
 #Database.set_database_path("/var/cache/app-info")
 
 class Follower:

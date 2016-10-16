@@ -21,7 +21,6 @@ Depends: ${misc:Depends},
          appstream,
          gir1.2-gtk-3.0,
          gir1.2-glib-2.0,
-         gir1.2-appstream,
          gir1.2-pango-1.0,
          python-cairo,
          vera-control-center

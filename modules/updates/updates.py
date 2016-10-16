@@ -24,7 +24,9 @@ from gi.repository import Gio, GObject, Gtk, Gdk, Pango
 
 from .widgets import UpdateList, UpdateItem, CircularProgressBar
 
-from .core.common import Database, Follower
+# FIXME pending AppStream API update. See #4
+#from .core.common import Database, Follower
+from .core.common import Follower
 from .core.handler import UpdateHandler
 
 import os
@@ -160,7 +162,8 @@ class Scene(quickstart.scenes.BaseScene):
 		self.update_list.show_all()
 		
 		# Open AppStream database
-		Database.open()
+		# FIXME pending AppStream API update. See #4
+		#Database.open()
 		
 		#for item in ["glade", "pokerth", "banshee", "gnome-software"]:
 		#	self.update_list.add_item(-1, item, "XX", "upgrade", True)

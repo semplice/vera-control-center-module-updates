@@ -21,9 +21,10 @@
 
 import os
 
-from gi.repository import Gtk, GLib, GObject, AppStream
+from gi.repository import Gtk, GLib, GObject
 
-from ..core.common import Database
+# FIXME pending AppStream API update. See #4
+#from ..core.common import Database
 
 ICON_SEARCH_WIDTH = 64
 ICON_SEARCH_HEIGHT = 64
@@ -232,10 +233,12 @@ class UpdateList(Gtk.TreeView):
 		"""
 		Adds an item.
 		"""
-		
-		self.component = Database.find_components("pkg:%s" % package_name)
-		if self.component:
-			self.component = self.component[0] # we search by package name
+
+		# FIXME pending AppStream API update. See #4
+		#self.component = Database.find_components("pkg:%s" % package_name)
+		#if self.component:
+		#	self.component = self.component[0] # we search by package name
+		self.component = None
 		
 		icon = PACKAGE_ICON_NAME
 		if self.component:
